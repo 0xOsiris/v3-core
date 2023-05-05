@@ -321,7 +321,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
             params.tickLower,
             params.tickUpper,
             params.liquidityDelta,
-            _slot0.tick
+            _slot0
         );
 
         if (params.liquidityDelta != 0) {
@@ -375,13 +375,13 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     /// @param owner the owner of the position
     /// @param tickLower the lower tick of the position's tick range
     /// @param tickUpper the upper tick of the position's tick range
-    /// @param tick the current tick, passed to avoid sloads
+    /// @param _slot0 the current tick, passed to avoid sloads
     function _updatePosition(
         address owner,
         int24 tickLower,
         int24 tickUpper,
         int128 liquidityDelta,
-        int24 tick
+        Slot0 memory _slot0
     ) private returns (Position.Info storage position) {
         position = positions.get(owner, tickLower, tickUpper);
 
@@ -397,15 +397,15 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 observations.observeSingle(
                     time,
                     0,
-                    tick,
-                    slot0.observationIndex,
+                    _slot0.tick,
+                    _slot0.observationIndex,
                     liquidity,
-                    slot0.observationCardinality
+                    _slot0.observationCardinality
                 );
 
             flippedLower = ticks.update(
                 tickLower,
-                tick,
+                _slot0.tick,
                 liquidityDelta,
                 _feeGrowthGlobal0X128,
                 _feeGrowthGlobal1X128,
@@ -417,7 +417,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
             );
             flippedUpper = ticks.update(
                 tickUpper,
-                tick,
+                _slot0.tick,
                 liquidityDelta,
                 _feeGrowthGlobal0X128,
                 _feeGrowthGlobal1X128,
@@ -437,7 +437,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         }
 
         (uint256 feeGrowthInside0X128, uint256 feeGrowthInside1X128) =
-            ticks.getFeeGrowthInside(tickLower, tickUpper, tick, _feeGrowthGlobal0X128, _feeGrowthGlobal1X128);
+            ticks.getFeeGrowthInside(tickLower, tickUpper, _slot0.tick, _feeGrowthGlobal0X128, _feeGrowthGlobal1X128);
 
         position.update(liquidityDelta, feeGrowthInside0X128, feeGrowthInside1X128);
 
