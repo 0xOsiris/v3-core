@@ -397,7 +397,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 observations.observeSingle(
                     time,
                     0,
-                    ,
+                    tick,
                     slot0.observationIndex,
                     liquidity,
                     slot0.observationCardinality
